@@ -13,6 +13,10 @@ const styles = theme => ({
     textAlign: 'left',
     padding: '5px',
     fontSize: '8px'
+  },
+  footer: {
+    marginTop: '10px',
+    fontSize: '8px'
   }
 });
 
@@ -31,6 +35,13 @@ class App extends React.Component {
           {this.props.status}
         </div>
         {this.renderBinderStat()}
+        <div className={this.props.classes.footer}>
+          <span style={{ fontWeight: 'bold' }}>Safariの方へ</span>
+          <br />
+          設定➝Safariで「サイト超えのトラッキングを防ぐ」をOFFにすればエラーが起きないらしいです。
+          <br />
+          デバッグしたいのでMacください。
+        </div>
       </div>
     );
   }
