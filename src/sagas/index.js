@@ -8,10 +8,7 @@ import API from '../api';
 function* handleGetList() {
   while (true) {
     const action = yield take(REQUEST_LIST);
-    console.log('呼ばれた');
     const { data, error } = yield call(API.getBinder, action.payload);
-    console.log(data);
-    console.log(error);
 
     if (data && !error) {
       yield put(successList(data));
@@ -40,7 +37,6 @@ function* handleDigitalBinderInit() {
 function* handleLoad() {
   const binderId = localStorage.getItem('binderId');
   if (binderId) {
-    console.log('呼んだ');
     yield put(binderIdSave(binderId));
     yield put(requestList(binderId));
   }

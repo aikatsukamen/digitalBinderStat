@@ -42,7 +42,7 @@ class ButtonAppBar extends React.Component {
     let isValid = false;
     const text = e.target.value;
     // バリデーション
-    if (text.match(/http:\/\/mypage.aikatsu.com\/mypages\/digital_binders\/[a-zA-Z0-9]{16}\//) !== null) {
+    if (text.match(/http:\/\/mypage.aikatsu.com\/mypages\/digital_binders\/[a-zA-Z0-9_]{16}\//) !== null) {
       isValid = true;
     }
     console.log(text);

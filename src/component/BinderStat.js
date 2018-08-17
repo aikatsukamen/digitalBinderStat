@@ -65,7 +65,7 @@ const BinderStat = props => {
       <Divider />
 
       {/* レアリティ */}
-      <Typography variant="title" gutterBottom>
+      <Typography variant="subheading" gutterBottom>
         属性
       </Typography>
       <div className={classes.progressArea}>
@@ -120,7 +120,7 @@ const BinderStat = props => {
       </div>
       <Divider />
       {/* レアリティ */}
-      <Typography variant="title" gutterBottom>
+      <Typography variant="subheading" gutterBottom>
         レアリティ
       </Typography>
       <div className={classes.progressArea}>
@@ -199,7 +199,7 @@ const BinderStat = props => {
       </div>
       <Divider />
       {/* 部位 */}
-      <Typography variant="title" gutterBottom>
+      <Typography variant="subheading" gutterBottom>
         部位
       </Typography>
       <div className={classes.progressArea}>

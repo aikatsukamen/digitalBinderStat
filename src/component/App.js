@@ -40,15 +40,8 @@ class App extends React.Component {
 function mapStateToProps(state) {
   let versionId = state.reducer.selectedVersionId;
   let stat = state.reducer.list[versionId];
-  // if (state.reducer.list.length !== 0) {
-  //   stat = state.reducer.list.find(o => o.version.id === versionId);
-  // }
-
   let binderId = state.reducer.binderId;
-  console.log('今のstate↓');
-  console.log(state);
-  console.log(state.reducer.binderId);
-  console.log(binderId);
+
   return {
     stat,
     binderId,
