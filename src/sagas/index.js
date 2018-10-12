@@ -1,5 +1,5 @@
 import { call, put, fork, take, select } from 'redux-saga/effects';
-import { requestList, REQUEST_LIST, successList, failureList, BINDER_ID_SUBMIT, binderIdSave } from '../actions';
+import { requestList, REQUEST_LIST, successList, failureList, BINDER_ID_SUBMIT, binderIdSave, updateSelectableVersions, closeNotify, openNotify } from '../actions';
 import API from '../api';
 
 /**
@@ -8,10 +8,30 @@ import API from '../api';
 function* handleGetList() {
   while (true) {
     const action = yield take(REQUEST_LIST);
-    const { data, error } = yield call(API.getBinder, action.payload);
+    const url = action.payload;
+    let statInfoList = {};
+
+    // 最新弾のリストを取得
+    const { data, error } = yield call(API.getBinder, url);
 
     if (data && !error) {
-      yield put(successList(data));
+      statInfoList[data.statInfo.version.id] = data.statInfo;
+      const versionIds = data.selectableVersion;
+      yield put(closeNotify());
+      yield put(openNotify({ message: `${data.statInfo.version.name}を取得しました。`, variant: 'success' }));
+
+      // 他の弾のリストも取得
+      for (let i = 1; i < versionIds.length; i++) {
+        const url = `${action.payload}${versionIds[i].id}`;
+        // 最新弾のリストを取得
+        const { data, error } = yield call(API.getBinder, url);
+        statInfoList[data.statInfo.version.id] = data.statInfo;
+        yield put(closeNotify());
+        yield put(openNotify({ message: `${data.statInfo.version.name}を取得しました。`, variant: 'success' }));
+      }
+
+      yield put(successList(statInfoList));
+      yield put(updateSelectableVersions(versionIds));
     } else {
       yield put(failureList({ error }));
       alert(error.message);

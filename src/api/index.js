@@ -32,6 +32,7 @@ function analyzeFriendsDigitalBinder(htmlStr) {
 
   const $ = cheerio.load(htmlStr);
 
+  const selectableVersion = [];
   const statInfo = {
     version: {
       id: '',
@@ -119,6 +120,16 @@ function analyzeFriendsDigitalBinder(htmlStr) {
     .find('span')
     .text();
 
+  // 選択可能弾
+  $('.m_select')
+    .find('option')
+    .each((index, elem) => {
+      selectableVersion.push({
+        id: $(elem).attr('value'),
+        name: $(elem).text()
+      });
+    });
+
   statInfo.version.id = $('.m_select > select option:selected').val();
   statInfo.version.name = $('.m_select > select option:selected').text();
 
@@ -141,48 +152,48 @@ function analyzeFriendsDigitalBinder(htmlStr) {
     // const rarity = cardIdOrig.split(/\s/)[1].toLowerCase();
     const rarity = (() => {
       switch (true) {
-      case /_U_PR_/.test(dressId):
-        return 'bfr';
-      case /_U_R_/.test(dressId):
-        return 'fr';
-      case /_PR_/.test(dressId):
-        return 'pr';
-      case /_R_/.test(dressId):
-        return 'r';
-      case /_N_/.test(dressId):
-        return 'n';
-      case /_U_CR_/.test(dressId):
-        return 'cr';
+        case /_U_PR_/.test(dressId):
+          return 'bfr';
+        case /_U_R_/.test(dressId):
+          return 'fr';
+        case /_PR_/.test(dressId):
+          return 'pr';
+        case /_R_/.test(dressId):
+          return 'r';
+        case /_N_/.test(dressId):
+          return 'n';
+        case /_U_CR_/.test(dressId):
+          return 'cr';
       }
     })();
 
     /** 属性 */
     const type = (() => {
       switch (true) {
-      case /_Qt_/.test(dressId):
-        return 'qt';
-      case /_Co_/.test(dressId):
-        return 'co';
-      case /_Se_/.test(dressId):
-        return 'se';
-      case /_Po_/.test(dressId):
-        return 'po';
+        case /_Qt_/.test(dressId):
+          return 'qt';
+        case /_Co_/.test(dressId):
+          return 'co';
+        case /_Se_/.test(dressId):
+          return 'se';
+        case /_Po_/.test(dressId):
+          return 'po';
       }
     })();
     /** 部位 */
     const category = (() => {
       switch (true) {
-      case /_T\d/.test(dressId):
-        return 't';
-      case /_B\d/.test(dressId):
-        return 'b';
-      case /_S\d/.test(dressId):
-        return 's';
-      case /_A\d/.test(dressId):
-        return 'a';
-      case /_W\d/.test(dressId):
-        // 今のところ通常弾にトップ＆ボトムスが無いので不明
-        return 'w';
+        case /_T\d/.test(dressId):
+          return 't';
+        case /_B\d/.test(dressId):
+          return 'b';
+        case /_S\d/.test(dressId):
+          return 's';
+        case /_A\d/.test(dressId):
+          return 'a';
+        case /_W\d/.test(dressId):
+          // 今のところ通常弾にトップ＆ボトムスが無いので不明
+          return 'w';
       }
     })();
 
@@ -220,7 +231,7 @@ function analyzeFriendsDigitalBinder(htmlStr) {
     statInfo.count.rate.category[c] = isNaN(statInfo.count.rate.category[c]) ? 0 : statInfo.count.rate.category[c];
   }
   // console.log(statInfo);
-  return statInfo;
+  return { statInfo, selectableVersion };
 }
 
 export default { getBinder, analyzeFriendsDigitalBinder };

@@ -2,11 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import './App.css';
-import { requestList, binderIdSubmit } from '../actions';
+import * as actions from '../actions';
 import AppBar from './AppBar';
 import BinderStat from './BinderStat';
+import Snackbar from './SnackBar';
 
 const styles = theme => ({
   status: {
@@ -14,38 +17,69 @@ const styles = theme => ({
     padding: '5px',
     fontSize: '8px'
   },
+  versionSelect: {
+    width: '100%'
+  },
   footer: {
     marginTop: '10px',
     fontSize: '8px'
+  },
+  select: {
+    root: {
+      width: '70%'
+    }
   }
 });
 
-class App extends React.Component {
-  renderBinderStat() {
-    if (this.props.stat) return <BinderStat stat={this.props.stat} />;
+const App = props => {
+  const renderBinderStat = () => {
+    if (props.stat) return <BinderStat stat={props.stat} />;
     return;
-  }
+  };
 
-  render() {
-    return (
-      <div className="App">
-        <AppBar buttonClick={this.props.binderIdSubmit} textinit={this.props.binderId} />
-        <div className={this.props.classes.status}>
-          status:
-          {this.props.status}
-        </div>
-        {this.renderBinderStat()}
-        <div className={this.props.classes.footer}>
-          <span style={{ fontWeight: 'bold' }}>Safariの方へ</span>
-          <br />
-          設定➝Safariで「サイト超えのトラッキングを防ぐ」をOFFにすればエラーが起きないらしいです。
-          <br />
-          デバッグしたいのでMacください。
-        </div>
+  /**
+   * 弾選択の描画
+   */
+  const renderVersionSelect = () => {
+    const selectItems = [];
+    for (const version of props.versionIds) {
+      selectItems.push(<MenuItem value={version.id}>{version.name}</MenuItem>);
+    }
+    return selectItems;
+  };
+
+  /**
+   * 弾選択イベント
+   * @param {object} event
+   */
+  const handleSelectChange = event => {
+    props.selectVersion(event.target.value);
+  };
+
+  return (
+    <div className="App">
+      <AppBar buttonClick={props.binderIdSubmit} textinit={props.binderId} />
+      <div className={props.classes.versionSelect}>
+        <TextField label="弾選択" select fullWidth={true} value={props.selectedVersionId} onChange={handleSelectChange}>
+          {renderVersionSelect()}
+        </TextField>
       </div>
-    );
-  }
-}
+      <div className={props.classes.status}>
+        status:
+        {props.status}
+      </div>
+      {renderBinderStat()}
+      <div className={props.classes.footer}>
+        <span style={{ fontWeight: 'bold' }}>Safariの方へ</span>
+        <br />
+        設定➝Safariで「サイト超えのトラッキングを防ぐ」をOFFにすればエラーが起きないらしいです。
+        <br />
+        デバッグしたいのでMacください。
+      </div>
+      <Snackbar open={props.notify.isOpen} message={props.notify.message} variant={props.notify.variant} onClose={props.closeNotify} />
+    </div>
+  );
+};
 
 // state
 function mapStateToProps(state) {
@@ -56,14 +90,19 @@ function mapStateToProps(state) {
   return {
     stat,
     binderId,
-    status: state.reducer.status
+    status: state.reducer.status,
+    versionIds: state.reducer.versionIds,
+    selectedVersionId: state.reducer.selectedVersionId,
+    notify: state.reducer.notify
   };
 }
 
 // action
 const mapDispatchToProps = {
-  requestList,
-  binderIdSubmit
+  requestList: actions.requestList,
+  binderIdSubmit: actions.binderIdSubmit,
+  selectVersion: actions.selectVersion,
+  closeNotify: actions.closeNotify
 };
 
 App.propTypes = {
@@ -72,7 +111,12 @@ App.propTypes = {
   stat: PropTypes.object,
   requestList: PropTypes.func.isRequired,
   binderIdSubmit: PropTypes.func.isRequired,
-  binderId: PropTypes.string
+  binderId: PropTypes.string,
+  versionIds: PropTypes.string.isRequired,
+  selectedVersionId: PropTypes.string.isRequired,
+  selectVersion: PropTypes.func.isRequired,
+  notify: PropTypes.object.isRequired,
+  closeNotify: PropTypes.func.isRequired
 };
 
 export default connect(
