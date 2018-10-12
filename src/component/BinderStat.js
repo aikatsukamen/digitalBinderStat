@@ -48,11 +48,36 @@ const styles = theme => ({
   progressArea: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  possessionArea: {
+    width: '95vw',
+    padding: '2vw'
+  },
+  fullWidth: {
+    width: '100%'
   }
 });
 
 const BinderStat = props => {
   const { classes } = props;
+
+  let notPosList = '';
+  // props.stat.list.notPos.join('\n');
+  for (let i = 0; i < props.stat.list.notPos.length; i++) {
+    const card = props.cardInfo.filter(card => {
+      return card.cardId === props.stat.list.notPos[i];
+    })[0];
+    notPosList += `${card.cardId} ${card.rarity.toUpperCase()} ${card.cardName}\n`;
+  }
+
+  let posList = '';
+  // props.stat.list.notPos.join('\n');
+  for (let i = 0; i < props.stat.list.possession.length; i++) {
+    const card = props.cardInfo.filter(card => {
+      return card.cardId === props.stat.list.possession[i];
+    })[0];
+    posList += `${card.cardId} ${card.rarity.replace('cr', 'cp').toUpperCase()} ${card.cardName}\n`;
+  }
 
   return (
     <div className={classes.root}>
@@ -265,18 +290,19 @@ const BinderStat = props => {
         </div>
       </div>
       <Divider />
-      <div className={classes.progressArea}>
-        <div>
-          <Typography variant="subheading" gutterBottom>
-            未所持リスト
-          </Typography>
-          <TextField multiline={true} value={props.stat.list.notPos.join('\n')} rows={5} />
-        </div>
+      <div className={classes.possessionArea}>
+        <Typography variant="subheading" gutterBottom>
+          未所持リスト
+        </Typography>
+        <TextField multiline={true} value={notPosList} rows={5} fullWidth={true} />
+      </div>
+      <Divider />
+      <div className={classes.possessionArea}>
         <div>
           <Typography variant="subheading" gutterBottom>
             所持リスト
           </Typography>
-          <TextField multiline={true} value={props.stat.list.possession.join('\n')} rows={5} />
+          <TextField multiline={true} value={posList} rows={5} fullWidth={true} />
         </div>
       </div>
     </div>
@@ -285,7 +311,8 @@ const BinderStat = props => {
 
 BinderStat.propTypes = {
   classes: PropTypes.object.isRequired,
-  stat: PropTypes.object.isRequired
+  stat: PropTypes.object.isRequired,
+  cardInfo: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(BinderStat);

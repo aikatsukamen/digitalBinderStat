@@ -43,3 +43,7 @@ export const OPEN_NOTIFY = 'OPEN_NOTIFY';
 export const openNotify = createAction(OPEN_NOTIFY);
 export const CLOSE_NOTIFY = 'CLOSE_NOTIFY';
 export const closeNotify = createAction(CLOSE_NOTIFY);
+
+// カードリストの取得
+export const UPDATE_CARD_INFO_LIST = 'UPDATE_CARD_INFO_LIST';
+export const updateCardInfoList = createAction(UPDATE_CARD_INFO_LIST);

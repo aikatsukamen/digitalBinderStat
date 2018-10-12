@@ -1,6 +1,9 @@
 import fetchJsonp from 'fetch-jsonp';
 import cheerio from 'cheerio';
 
+/**
+ * URLで指定されたバインダーの情報を取得する
+ */
 function getBinder(url) {
   console.log(`[バインダー情報取得]${url}`);
   return new Promise((resolve, reject) => {
@@ -14,6 +17,29 @@ function getBinder(url) {
       .then(json => {
         const ret = analyzeFriendsDigitalBinder(json.htmlStr);
         resolve({ data: ret });
+      })
+      .catch(error => {
+        console.log(error);
+        resolve({ error });
+      });
+  });
+}
+
+/**
+ * URLで指定されたバインダーの情報を取得する
+ */
+function getCardInfoList() {
+  console.log('[カード情報取得]');
+  return new Promise((resolve, reject) => {
+    fetchJsonp('https://script.google.com/macros/s/AKfycbyIPnoVQ9MJ60xhC_ADUj1XyrM8NvNlMcvR3BF8Sz_otqF8kUup/exec', {
+      jsonpCallback: 'callback',
+      timeout: 10000
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        resolve({ data: json });
       })
       .catch(error => {
         console.log(error);
@@ -147,7 +173,7 @@ function analyzeFriendsDigitalBinder(htmlStr) {
       .text()
       .trim();
     /** カードID */
-    // const cardId = cardIdOrig.split(/\s/)[0];
+    const cardId = cardIdOrig.split(/\s/)[0];
     /** レアリティ */
     // const rarity = cardIdOrig.split(/\s/)[1].toLowerCase();
     const rarity = (() => {
@@ -162,7 +188,9 @@ function analyzeFriendsDigitalBinder(htmlStr) {
           return 'r';
         case /_N_/.test(dressId):
           return 'n';
-        case /_U_CR_/.test(dressId):
+        case /_CR_/.test(dressId):
+          return 'cr';
+        case /_School_/.test(dressId):
           return 'cr';
       }
     })();
@@ -204,14 +232,14 @@ function analyzeFriendsDigitalBinder(htmlStr) {
     statInfo.count.all.rarity[rarity] += 1;
     statInfo.count.all.type[type] += 1;
     statInfo.count.all.category[category] += 1;
-    statInfo.list.all.push(cardIdOrig);
+    statInfo.list.all.push(cardId);
     if (doesPossess) {
       statInfo.count.collect.rarity[rarity] += 1;
       statInfo.count.collect.type[type] += 1;
       statInfo.count.collect.category[category] += 1;
-      statInfo.list.possession.push(cardIdOrig);
+      statInfo.list.possession.push(cardId);
     } else {
-      statInfo.list.notPos.push(cardIdOrig);
+      statInfo.list.notPos.push(cardId);
     }
   });
   // 所持率を計算する(小数点以下切り捨ての整数値))
@@ -234,4 +262,4 @@ function analyzeFriendsDigitalBinder(htmlStr) {
   return { statInfo, selectableVersion };
 }
 
-export default { getBinder, analyzeFriendsDigitalBinder };
+export default { getBinder, getCardInfoList };

@@ -33,7 +33,7 @@ const styles = theme => ({
 
 const App = props => {
   const renderBinderStat = () => {
-    if (props.stat) return <BinderStat stat={props.stat} />;
+    if (props.stat) return <BinderStat stat={props.stat} cardInfo={props.cardInfo} />;
     return;
   };
 
@@ -43,7 +43,11 @@ const App = props => {
   const renderVersionSelect = () => {
     const selectItems = [];
     for (const version of props.versionIds) {
-      selectItems.push(<MenuItem value={version.id}>{version.name}</MenuItem>);
+      selectItems.push(
+        <MenuItem key={version.id} value={version.id}>
+          {version.name}
+        </MenuItem>
+      );
     }
     return selectItems;
   };
@@ -69,13 +73,7 @@ const App = props => {
         {props.status}
       </div>
       {renderBinderStat()}
-      <div className={props.classes.footer}>
-        <span style={{ fontWeight: 'bold' }}>Safariの方へ</span>
-        <br />
-        設定➝Safariで「サイト超えのトラッキングを防ぐ」をOFFにすればエラーが起きないらしいです。
-        <br />
-        デバッグしたいのでMacください。
-      </div>
+      <div className={props.classes.footer}>メンテ中の時にどうなるかは不明だよ！</div>
       <Snackbar open={props.notify.isOpen} message={props.notify.message} variant={props.notify.variant} onClose={props.closeNotify} />
     </div>
   );
@@ -93,7 +91,8 @@ function mapStateToProps(state) {
     status: state.reducer.status,
     versionIds: state.reducer.versionIds,
     selectedVersionId: state.reducer.selectedVersionId,
-    notify: state.reducer.notify
+    notify: state.reducer.notify,
+    cardInfo: state.reducer.cardInfo
   };
 }
 
@@ -112,11 +111,12 @@ App.propTypes = {
   requestList: PropTypes.func.isRequired,
   binderIdSubmit: PropTypes.func.isRequired,
   binderId: PropTypes.string,
-  versionIds: PropTypes.string.isRequired,
+  versionIds: PropTypes.array.isRequired,
   selectedVersionId: PropTypes.string.isRequired,
   selectVersion: PropTypes.func.isRequired,
   notify: PropTypes.object.isRequired,
-  closeNotify: PropTypes.func.isRequired
+  closeNotify: PropTypes.func.isRequired,
+  cardInfo: PropTypes.array.isRequired
 };
 
 export default connect(

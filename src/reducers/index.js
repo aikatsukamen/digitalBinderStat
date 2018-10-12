@@ -8,6 +8,7 @@ const initial = {
   binderId: '',
   selectedVersionId: '',
   versionIds: [],
+  cardInfo: [],
   notify: {
     isOpen: false,
     variant: 'info',
@@ -27,7 +28,7 @@ const reducer = (state = initial, action) => {
         ...state,
         status: 'done',
         error: false,
-        list: action.payload
+        list: { ...state.list, [action.payload.version.id]: action.payload }
       };
     }
     // 通信失敗
@@ -51,6 +52,9 @@ const reducer = (state = initial, action) => {
     }
     case Actions.CLOSE_NOTIFY: {
       return { ...state, notify: { isOpen: false, message: '', variant: 'info' } };
+    }
+    case Actions.UPDATE_CARD_INFO_LIST: {
+      return { ...state, cardInfo: action.payload };
     }
     default:
       return state;
