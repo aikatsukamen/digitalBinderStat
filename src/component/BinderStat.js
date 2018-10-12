@@ -67,7 +67,7 @@ const BinderStat = props => {
     const card = props.cardInfo.filter(card => {
       return card.cardId === props.stat.list.notPos[i];
     })[0];
-    notPosList += `${card.cardId} ${card.rarity.toUpperCase()} ${card.cardName}\n`;
+    notPosList += `${card.cardId} ${card.rarity.replace('cr', 'cp').toUpperCase()} ${card.cardName}\n`;
   }
 
   let posList = '';
